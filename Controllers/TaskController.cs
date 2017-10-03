@@ -68,5 +68,12 @@ namespace ReminderApi.Controllers
                 return NoContent();
             }
         }
+
+        [Route("GetByToDoList/{id}")]
+        [HttpGet("{id}")]
+        public ActionResult GetByToDoList(int id)
+        {
+            return Ok(new TaskRepository(new ReminderContext()).GetAllTasksByListId(id));
+        }
     }
 }

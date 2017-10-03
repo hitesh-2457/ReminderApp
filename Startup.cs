@@ -30,6 +30,8 @@ namespace ReminderApi {
                 app.UseDeveloperExceptionPage ();
             }
 
+            app.UseCors(builder => builder.AllowAnyOrigin());
+
             // app.UseMvc();
             app.Use (async (context, next) => {
                 await next ();
