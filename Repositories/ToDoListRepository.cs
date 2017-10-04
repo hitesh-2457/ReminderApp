@@ -121,9 +121,19 @@ namespace ReminderApi.Repository
             if (item != null)
             {
                 item.Name = toDoList.Name;
-                item.Tasks = toDoList.Tasks;
-
+                foreach (var task in toDoList.Tasks)
+                {
+                    if (task.Id == 0)
+                    {
+                        taskRepository.Add(task);
+                    }
+                    else
+                    {
+                        taskRepository.Update(task.Id, task);
+                    }
+                }
                 return item;
+
             }
             return null;
         }

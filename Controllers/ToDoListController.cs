@@ -57,7 +57,7 @@ namespace ReminderApi.Controllers
                 var result = toDoListRepo.Update(id, toDoList);
                 context.SaveChanges();
                 if (result != null)
-                    return Ok(result);
+                    return Ok();
                 return NoContent();
             }
         }

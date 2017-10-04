@@ -84,6 +84,7 @@ export class TodolistComponent implements OnInit {
 
   showTaskFormFunc() {
     this.showTaskForm = true;
+    this.newTask.ToDoListId = this.newToDo.Id;
     this.newTask.DueDate = new Date((new Date).toDateString());
     this.newTask.RemindDate = new Date((new Date).toDateString());
   }
