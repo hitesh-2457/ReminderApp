@@ -1,18 +1,24 @@
 <div>
   <div class="row">
-    <button type="button" *ngIf="!showAddForm" (click)="showAddForm=!showAddForm" class="add-btn btn btn-secondary btn-sm">Add ToDo-List</button>
+    <div *ngIf="errorMessages" class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" (click)="errorMessages=null;">&times;</span></button>
+      <strong>Error!</strong> {{errorMessages}}
+    </div>
+  </div>
+  <div class="row">
+    <button type="button" *ngIf="!showAddForm" (click)="showAddFormFunc()" class="add-btn btn btn-default">Add ToDo-List</button>
     <div class="card" *ngIf="showAddForm">
       <div class="row">
         <input [(ngModel)]="newToDo.Name" placeholder="ToDo-List Name">
         <div class="add-btn">
           <button type="button" class="btn btn-default btn-success glyphicon glyphicon-ok" (click)="submitForm()"></button>
           <button type="button" class="btn btn-default btn-danger glyphicon glyphicon-remove" (click)="clearForm()"></button>
+          <button type="button" class="btn btn-default" *ngIf="!showTaskForm" (click)="showTaskFormFunc()">Add New Task</button>
         </div>
       </div>
-      <hr>
       <div class="row">
-        <button type="button" *ngIf="!showTaskForm" (click)="showTaskFormFunc()" class="add-btn btn btn-secondary btn-sm">Add New Task</button>
         <div *ngIf="showTaskForm">
+          <hr>
           <div class="add-btn">
             <button type="button" class="btn btn-default btn-success glyphicon glyphicon-ok" (click)="submitTaskForm()"></button>
             <button type="button" class="btn btn-default btn-danger glyphicon glyphicon-remove" (click)="clearTaskForm()"></button>
@@ -20,22 +26,66 @@
           <div>
             <input [(ngModel)]="newTask.Name" placeholder="Task Name">
             <textarea rows="2" name="note" style="width: 90%" placeholder="Task Note" [(ngModel)]="newTask.Note"></textarea>
-            <label>Due Date:</label><p-calendar [(ngModel)]="newTask.DueDate" showTime="showTime" hourFormat="12"></p-calendar>
-            <label>Reminder:</label><p-calendar [(ngModel)]="newTask.RemindDate" showTime="showTime" hourFormat="12"></p-calendar>
+            <label>Due Date:</label>
+            <p-calendar [(ngModel)]="newTask.DueDate" showTime="showTime" hourFormat="12"></p-calendar>
+            <label>Reminder:</label>
+            <p-calendar [(ngModel)]="newTask.RemindDate" showTime="showTime" hourFormat="12"></p-calendar>
           </div>
         </div>
-      </div>
-      <div>
-        <p></p>
+        <div *ngFor="let task of newTasks">
+          <hr>
+          <div class="add-btn">
+            <button type="button" class="btn btn-default btn-success glyphicon glyphicon-pencil" (click)="editTaskFormEle(task)"></button>
+            <button type="button" class="btn btn-default btn-danger glyphicon glyphicon-trash" (click)="deleteTaskFormEle(task)"></button>
+          </div>
+          <div>
+            <p>{{task.Name}}</p>
+            <p>{{task.Note}}</p>
+            <p *ngIf="task.DueDate"><label>DueDate: </label>{{task.DueDate}}</p>
+            <p *ngIf="task.RemindDate"><label>Reminder: </label>{{task.RemindDate}}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <br>
   <div class="card" *ngFor="let todo of todoLists">
-    <h3>{{todo.Name}}</h3>
-    <hr>
+    <div class="row">
+      <div class="col-md-10">
+        <p class="name">{{todo.Name}}</p>
+      </div>
+      <div class="col-md-2 add-btn">
+        <button type="button" class="btn btn-default btn-success glyphicon glyphicon-pencil" (click)="editToDoList(todo)"></button>
+        <button type="button" class="btn btn-default btn-danger glyphicon glyphicon-trash" (click)="deleteToDoList(todo.Id)"></button>
+      </div>
+    </div>
     <div *ngFor="let task of todo.Tasks">
-      <p>{{task.Name}}</p>
+      <div *ngIf="!task.IsCompleted">
+        <hr>
+        <div class="add-btn">
+          <button type="button" class="btn btn-default btn-danger glyphicon glyphicon-trash" (click)="deleteTask(task.Id,todo)"></button>
+        </div>
+        <div>
+          <p class="taskName"><input type="checkbox" [(ngModel)]="task.IsCompleted" (click)="markTaskComplete(task)">{{task.Name}}</p>
+          <p>{{task.Note}}</p>
+          <p *ngIf="task.DueDate"><label>DueDate: </label>{{task.DueDate}}</p>
+          <p *ngIf="task.RemindDate"><label>Reminder: </label>{{task.RemindDate}}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngFor="let task of todo.Tasks">
+      <div *ngIf="task.IsCompleted">
+        <hr>
+        <div class="add-btn">
+          <button type="button" class="btn btn-default btn-danger glyphicon glyphicon-trash" (click)="deleteTask(task.Id,todo)"></button>
+        </div>
+        <div>
+          <p class="taskName"><input type="checkbox" [(ngModel)]="task.IsCompleted" (click)="markTaskComplete(task)">{{task.Name}}</p>
+          <p>{{task.Note}}</p>
+          <p *ngIf="task.DueDate"><label>DueDate: </label>{{task.DueDate}}</p>
+          <p *ngIf="task.RemindDate"><label>Reminder: </label>{{task.RemindDate}}</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

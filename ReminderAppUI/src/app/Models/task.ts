@@ -20,7 +20,6 @@ export class Task {
     this.DueDate = res.dueDate;
     this.RemindDate = res.remindDate;
     this.IsCompleted = res.isCompleted;
-    this.ToDoList = todo;
     this.DateCreated = res.dateCreated;
     this.DateModified = res.dateModified;
     return this;

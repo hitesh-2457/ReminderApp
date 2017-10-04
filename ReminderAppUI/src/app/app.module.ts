@@ -13,13 +13,11 @@ import { TaskApiService } from './Services/task-api/task-api.service';
 import { TodoApiService } from './Services/todo-api/todo-api.service';
 
 import { AppComponent } from './app.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { TodolistComponent } from './todolist/todolist.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
     TodolistComponent
   ],
   imports: [

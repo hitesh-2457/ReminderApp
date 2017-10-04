@@ -3,6 +3,8 @@
   padding: 10px;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .card:hover {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -14,8 +16,10 @@ hr{
   margin-top: 10px;
   margin-bottom: 10px;
 }
-.add-btn{
+.btn{
   float: right;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 .row{
   margin: 0px 0px 0px 0px;
@@ -27,4 +31,19 @@ input{
   border-bottom: 1px solid gray;
   margin-top: 2px;
   margin-bottom: 2px;
+}
+.name{
+  font-size: 25px;
+}
+.taskName{
+  font-size: 18px;
+}
+.ui-datepicker{
+  width: 19em;
+}
+.add-btn{
+  float: right;
+}
+.inputname{
+  font-size: 25px;
 }

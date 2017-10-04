@@ -9,7 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace ReminderApi {
     public class Startup {
@@ -21,6 +22,15 @@ namespace ReminderApi {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices (IServiceCollection services) {
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("MyCorsPolicy", corsBuilder.Build());
+            });
+
             services.AddMvc ();
         }
 
@@ -30,7 +40,8 @@ namespace ReminderApi {
                 app.UseDeveloperExceptionPage ();
             }
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors("MyCorsPolicy");
+            // app.UseCors(builder => builder.AllowAnyOrigin());
 
             // app.UseMvc();
             app.Use (async (context, next) => {

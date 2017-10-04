@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CalendarModule } from 'primeng/primeng';
 
 import { TodoApiService } from '../Services/todo-api/todo-api.service';
@@ -20,7 +21,11 @@ export class TodolistComponent implements OnInit {
   newToDo: ToDoList;
   newTask: Task;
   newTasks: Task[];
-  constructor(private todoApi: TodoApiService, private taskApi: TaskApiService) {
+  isEdit = false;
+  originalToDo: ToDoList;
+  errorMessages: string;
+
+  constructor(private todoApi: TodoApiService, private taskApi: TaskApiService, private router: Router) {
     this.newToDo = new ToDoList();
     this.newTask = new Task();
     this.newTasks = [];
@@ -41,25 +46,46 @@ export class TodolistComponent implements OnInit {
           }
         });
       });
-      // console.log(this.todoLists);
-      // console.log(this.todoLists[0].Name);
     });
   }
 
+  showAddFormFunc() {
+    this.showAddForm = !this.showAddForm;
+  }
   submitForm() {
     this.showAddForm = false;
     this.showTaskForm = false;
 
-    this.todoApi.postToDoList(this.newToDo);
+    this.newToDo.Tasks = this.newTasks;
+    this.todoApi.postToDoList(this.newToDo, this.isEdit).subscribe(
+      (data) => {
+        window.location.reload();
+        this.errorMessages = null;
+      },
+
+      (error) => {
+        this.errorMessages = 'Failed to update To-Do List. Try again Later.';
+      }
+    );
   }
 
   clearForm() {
-    this.showAddForm = false;
     this.showTaskForm = false;
+    this.showAddForm = false;
 
     this.newToDo = new ToDoList();
     this.newTask = new Task();
     this.newTasks = [];
+    if (this.isEdit) {
+      this.todoLists.push(this.originalToDo);
+      this.isEdit = false;
+    }
+  }
+
+  showTaskFormFunc() {
+    this.showTaskForm = true;
+    this.newTask.DueDate = new Date((new Date).toDateString());
+    this.newTask.RemindDate = new Date((new Date).toDateString());
   }
 
   submitTaskForm() {
@@ -75,9 +101,60 @@ export class TodolistComponent implements OnInit {
     this.newTask = new Task();
   }
 
-  showTaskFormFunc() {
+  deleteTaskFormEle(task: Task) {
+    this.newTasks.splice(this.newTasks.findIndex(t => t === task), 1);
+  }
+
+  editTaskFormEle(task: Task) {
     this.showTaskForm = true;
-    this.newTask.DueDate = new Date((new Date).toDateString());
-    this.newTask.RemindDate = new Date((new Date).toDateString());
+    this.newTasks.splice(this.newTasks.findIndex(t => t === task), 1);
+    this.newTask = task;
+  }
+
+  deleteTask(taskId: number, todoList: ToDoList) {
+    this.taskApi.deleteTask(taskId).subscribe(
+      (data) => {
+        todoList.Tasks.splice(todoList.Tasks.findIndex(t => t.Id === taskId), 1);
+        this.errorMessages = null;
+      },
+      (error) => {
+        this.errorMessages = 'Failed to delete the task. Try again Later.';
+      }
+    );
+  }
+
+  editToDoList(todoList: ToDoList) {
+    this.todoLists.splice(this.todoLists.findIndex(t => t === todoList), 1);
+
+    this.isEdit = true;
+    this.showAddForm = true;
+    this.originalToDo = Object.assign({}, todoList);
+    this.newToDo = todoList;
+    this.newTasks = todoList.Tasks;
+    window.scrollTo(0, 0);
+  }
+
+  deleteToDoList(todoListId: number) {
+    this.todoApi.deleteToDoList(todoListId).subscribe(
+      (data) => {
+        this.todoLists.splice(this.todoLists.findIndex(t => t.Id === todoListId), 1);
+        this.errorMessages = null;
+      },
+      (error) => {
+        this.errorMessages = 'Failed to delete the To-Do List. Try again Later.';
+      }
+    );
+  }
+
+  markTaskComplete(task: Task) {
+    this.taskApi.markTaskComplete(task.Id).subscribe(
+      (data) => {
+        this.errorMessages = null;
+      },
+      (error) => {
+        task.IsCompleted = false;
+        this.errorMessages = 'Failed to mark the task complete. Try again later.';
+      }
+    );
   }
 }

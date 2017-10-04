@@ -75,5 +75,17 @@ namespace ReminderApi.Controllers
         {
             return Ok(new TaskRepository(new ReminderContext()).GetAllTasksByListId(id));
         }
+
+        [Route("MarkTaskComplete/{id}")]
+        [HttpPost("{id}")]
+        public ActionResult MarkTaskComplete(int id)
+        {
+            using(var context = new ReminderContext())
+            {
+                new TaskRepository(context).MarkComplete(id);
+                context.SaveChanges();
+            }
+            return Ok();
+        }
     }
 }
