@@ -19,12 +19,14 @@ namespace ReminderApi
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Server=localhost;Database=ReminderApp;User=SA;Password='Qwerty123!!';Connect Timeout=60");
+                optionsBuilder.UseSqlServer(ConnectionString);
             }
         }
 
         public DbSet<ToDoList> ToDoLists { get; set; }
         public DbSet<Task> Tasks { get; set; }
+
+        public static string ConnectionString { get; set; }
 
         public override int SaveChanges()
         {

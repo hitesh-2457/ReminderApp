@@ -12,16 +12,21 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 
-namespace ReminderApi {
-    public class Startup {
-        public Startup (IConfiguration configuration) {
+namespace ReminderApi
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices (IServiceCollection services) {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            ReminderContext.ConnectionString = Configuration.GetSection("ConnectionStrings")["DataBase"];
             var corsBuilder = new CorsPolicyBuilder();
             corsBuilder.AllowAnyHeader();
             corsBuilder.AllowAnyMethod();
@@ -31,33 +36,37 @@ namespace ReminderApi {
                 options.AddPolicy("MyCorsPolicy", corsBuilder.Build());
             });
 
-            services.AddMvc ();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure (IApplicationBuilder app, IHostingEnvironment env) {
-            if (env.IsDevelopment ()) {
-                app.UseDeveloperExceptionPage ();
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseCors("MyCorsPolicy");
             // app.UseCors(builder => builder.AllowAnyOrigin());
 
             // app.UseMvc();
-            app.Use (async (context, next) => {
-                await next ();
+            app.Use(async (context, next) =>
+            {
+                await next();
                 if (context.Response.StatusCode == 404 &&
-                    !Path.HasExtension (context.Request.Path.Value) &&
-                    !context.Request.Path.Value.StartsWith ("/api/")) {
+                    !Path.HasExtension(context.Request.Path.Value) &&
+                    !context.Request.Path.Value.StartsWith("/api/"))
+                {
                     context.Request.Path = "/index.html";
-                    await next ();
+                    await next();
                 }
             });
 
-            app.UseMvcWithDefaultRoute ();
+            app.UseMvcWithDefaultRoute();
 
-            app.UseDefaultFiles ();
-            app.UseStaticFiles ();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 }
